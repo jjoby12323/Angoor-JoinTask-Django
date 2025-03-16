@@ -1,0 +1,28 @@
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+
+# Ignore environment variables and secrets
+.env
+.env.*
+.DS_Store
+
+# Logs and debug files
+logs/
+*.log
+
+# Ignore compiled files
+*.sqlite3
+db.sqlite3
+
+# Ignore Docker and build files
+.dockerignore
+build/
+.vscode/
+.idea/

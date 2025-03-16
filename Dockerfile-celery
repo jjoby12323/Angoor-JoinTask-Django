@@ -14,5 +14,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the application code
 COPY . /app/
 
-# Start Celery worker
+# Start Celery worker with environment-based broker URL
 CMD ["celery", "-A", "myproject", "worker", "--loglevel=info"]
