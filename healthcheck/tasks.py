@@ -9,4 +9,4 @@ def health_check_task():
 def process_text_task(text):
     """Simulate processing text asynchronously"""
     time.sleep(5)  # Simulate a delay (e.g., processing time)
-    return f"Processed text: {text.upper()}"
+    return f"Processed text new: {text.upper()}"
