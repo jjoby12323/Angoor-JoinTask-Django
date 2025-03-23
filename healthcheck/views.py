@@ -15,7 +15,7 @@ class HealthCheckView(APIView):
 
     def get(self, request):
         task_result = health_check_task.delay()
-        return Response({"New Status for the video": "Healthy", "celery_task_id": task_result.id}, status=status.HTTP_200_OK)
+        return Response({"Video Status": "Healthy. Don't need an apple.", "celery_task_id": task_result.id}, status=status.HTTP_200_OK)
 
 class ProcessTextView(APIView):
     """API to trigger a background text processing task"""
