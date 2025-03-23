@@ -1,18 +1,9 @@
-# Use the same base image
 FROM python:3.10
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1
-
-# Set the working directory
 WORKDIR /app
 
-# Copy requirements and install dependencies
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
 
-# Copy the application code
-COPY . /app/
+RUN pip install -r requirements.txt
 
-# Start Celery worker with environment-based broker URL
 CMD ["celery", "-A", "myproject", "worker", "--loglevel=info"]

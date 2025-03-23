@@ -1,18 +1,36 @@
-version: '3.8'
+version: "3.8"
 
 services:
+  db:
+    image: postgres:14
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
   django:
     build: .
     container_name: django_app
-    command: ["gunicorn", "--bind", "0.0.0.0:8000", "myproject.wsgi:application"]
-    volumes:
-      - .:/app
+    depends_on:
+      - db
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
     ports:
       - "8000:8000"
-    depends_on:
-      - redis
-    env_file:
-      - .env
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             gunicorn --bind 0.0.0.0:8000 myproject.wsgi"
 
   celery:
     build:
@@ -20,12 +38,23 @@ services:
       dockerfile: Dockerfile-celery
     container_name: celery_worker
     depends_on:
-      - redis
-    env_file:
-      - .env
+      - django
+      - db
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      CELERY_BROKER_URL: redis://redis:6379/0
+    command: ["celery", "-A", "myproject", "worker", "--loglevel=info"]
 
   redis:
-    image: "redis:latest"
-    container_name: redis
+    image: redis:6
+    container_name: redis_cache
+    restart: always
     ports:
       - "6379:6379"
+
+volumes:
+  pgdata:
